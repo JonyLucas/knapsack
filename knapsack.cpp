@@ -25,7 +25,7 @@ int main(){
 
     int res = knapsack(v, p, M, n);
 
-    cout << "Resultado: " << res << endl;
+    cout << "Valor total: " << res << endl;
 
     return 0;
 }
@@ -34,6 +34,10 @@ int knapsack(int v[], int p[], int M, int n){
 
     /**Armazenar o valor maximo para subproblemas menores e, posteriormente, solucionar o problema maior**/
     int valMax[n+1][M+1];
+
+    /**Vetor para indicar os elementos selecionados, 1 indica que o elemento foi selecionado**/
+    int choosen[n];
+    choosen[0] = 0; //Inicializa o vetor com valor 0
 
     /**Inicia a coluna 0 e linha 0, com 0s, significando que para mochila de capacidade 0
         ou 0 itens na mochila, o valor máximo obtido é zero**/
@@ -59,6 +63,37 @@ int knapsack(int v[], int p[], int M, int n){
             }
         }
     }
+
+    int w = M, count = n;
+    //cout << "Capacidade: " << w << endl;
+
+    /**Laço para indicar os elementos que foram selecionados**/
+    while(w >=0 && count > 0){
+        if(p[count-1] <= M){
+            //cout << "peso[" << count << "]" << p[count-1] << endl;
+            if(valMax[count][w] == (v[count-1] + valMax[count-1][w - p[count-1]])){
+                choosen[count-1] = 1;
+                w -= p[count-1];
+                //cout << "Capacidade: " << w << endl;
+                count--;
+            }else{
+                choosen[count-1] = 0;
+                count--;
+            }
+        }else{
+            choosen[count-1] = 0;
+            count--;
+        }
+    }
+
+    cout << "Produtos escolhidos: ";
+
+    for(int i = 0; i < n; i++){
+        if(choosen[i])
+            cout <<  i+1 << " ";
+    }
+
+    cout << endl;
 
     return valMax[n][M];
 }
